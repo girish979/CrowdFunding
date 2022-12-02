@@ -12,6 +12,8 @@ interface IERC20 {
 }
 
 contract CrowdFunding {
+
+    // Create a Campain with gola, start and end dates
     struct Campaign {
         address creator;
         uint goal;
@@ -21,11 +23,11 @@ contract CrowdFunding {
         bool claimed;
     }
 
-    IERC20 public immutable token;
-    uint public count;
-    uint public maxDuration;
-    mapping(uint => Campaign) public campaigns;
-    mapping(uint => mapping(address => uint)) public pledgedAmount;
+    IERC20 public immutable token; // ERC20 token
+    uint public count;  //Count Campains
+    uint public maxDuration;    //Max allowed duration of campain
+    mapping(uint => Campaign) public campaigns; //Campains reated list
+    mapping(uint => mapping(address => uint)) public pledgedAmount; //Users pledged tokens for all campains
 
     event Launch(
         uint id,
@@ -40,11 +42,13 @@ contract CrowdFunding {
     event Claim(uint id);
     event Refund(uint id, address indexed caller, uint amount);
 
+    //ERC20 toekn to accept & Max allowed duration
     constructor(address _token, uint _maxDuration) {
         token = IERC20(_token);
         maxDuration = _maxDuration;
     }
 
+    //Launch Campaign
     function launch(uint _goal, uint32 _startAt, uint32 _endAt) external {
         require(_startAt >= block.timestamp,"Start time is less than current Block Timestamp");
         require(_endAt > _startAt,"End time is less than Start time");
